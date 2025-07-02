@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inversor de Texto 180°</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: VT323 para el look retro de terminal -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+    <style>
+        /* Estilo base con la fuente de terminal */
+        body, textarea, button {
+            font-family: 'VT323', monospace;
+        }
+        /* Animación para el cursor parpadeante */
+        .blinking-cursor {
+            display: inline-block;
+            width: 10px;
+            height: 1.5rem; /* Ajustar al tamaño del texto */
+            background-color: #4ade80; /* green-400 */
+            animation: blink 1s step-end infinite;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+        @keyframes blink {
+            from, to { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        /* Remover el anillo de foco por defecto y usar el nuestro */
+        textarea:focus, button:focus {
+            outline: none;
+            box-shadow: none;
+        }
+    </style>
+</head>
+<body class="bg-black text-green-400 flex items-center justify-center min-h-screen p-4">
+
+    <div class="w-full max-w-3xl mx-auto border-2 border-green-700 p-4 md:p-6">
+        
+        <!-- ASCII Art Header -->
+        <pre class="text-center text-green-500 text-xs md:text-sm">
+   _   _            _   _   _
+  ((___))          | | | | | |
+  [ x x ]          | |_| | | |
+   \   /           |  _  | | |
+   '---'           | | | | |_|
+   C&P Inc.        |_| |_| (_)
+        </pre>
+
+        <!-- Título y descripción -->
+        <div class="text-center my-6">
+            <h1 class="text-4xl md:text-5xl text-green-300 flex items-center justify-center">
+                > TXT.FLIP.EXE<span class="blinking-cursor"></span>
+            </h1>
+            <p class="text-green-500 mt-2">[ INICIANDO PROTOCOLO DE INVERSIÓN 180° ]</p>
+        </div>
+
+        <!-- Área de la aplicación -->
+        <div class="p-2">
+            
+            <!-- Input del usuario -->
+            <label for="inputText" class="block text-lg text-green-300 mb-2">> INPUT_BUFFER:</label>
+            <textarea id="inputText" rows="4" class="w-full bg-black border-2 border-green-600 p-3 text-green-300 placeholder-green-700 focus:border-green-400 transition text-xl" placeholder="INGRESE TEXTO..."></textarea>
+
+            <!-- Botón de conversión -->
+            <div class="text-left mt-4">
+                <button id="convertButton" class="border-2 border-green-500 text-green-400 font-bold py-2 px-4 hover:bg-green-500 hover:text-black transition-colors duration-300">
+                    [ EJECUTAR ]
+                </button>
+            </div>
+
+            <!-- Resultado -->
+            <div id="resultContainer" class="mt-8 hidden">
+                <label for="output" class="block text-lg text-green-300 mb-2">> OUTPUT_STREAM:</label>
+                <div class="relative">
+                    <div id="output" class="w-full bg-black border-2 border-green-600 p-4 text-green-300 text-2xl min-h-[80px] flex items-center justify-center text-center break-words">
+                    </div>
+                    <button id="copyButton" class="absolute top-2 right-2 border border-green-700 bg-black hover:bg-green-700 hover:text-black text-green-500 font-semibold py-1 px-2 text-sm transition">
+                        > COPIAR
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pie de página -->
+        <footer class="text-center mt-8 text-green-700 text-sm">
+            <p>// CONEXIÓN TERMINADA //</p>
+            <p class="mt-2">© 2025 ʎǝlǝpoԀ sɐᴉʇɐW. Todos los derechos reservados.</p>
+        </footer>
+    </div>
+
+    <script>
+        // --- Lógica de la aplicación (sin cambios) ---
+
+        // Mapa de caracteres. Asocia cada letra normal con su versión "invertida".
+        const charMap = {
+            'a': 'ɐ', 'b': 'q', 'c': 'ɔ', 'd': 'p', 'e': 'ǝ', 'f': 'ɟ', 'g': 'ƃ', 'h': 'ɥ', 'i': 'ᴉ', 'j': 'ɾ', 'k': 'ʞ', 'l': 'l', 'm': 'ɯ', 'n': 'u', 'p': 'd', 'q': 'b', 'r': 'ɹ', 's': 's', 't': 'ʇ', 'u': 'n', 'v': 'ʌ', 'w': 'ʍ', 'x': 'x', 'y': 'ʎ', 'z': 'z',
+            'A': '∀', 'B': 'B', 'C': 'Ɔ', 'D': 'p', 'E': 'Ǝ', 'F': 'Ⅎ', 'G': '⅁', 'H': 'H', 'I': 'I', 'J': 'ſ', 'K': 'K', 'L': '˥', 'M': 'W', 'N': 'N', 'P': 'Ԁ', 'Q': 'Q', 'R': 'R', 'S': 'S', 'T': '┴', 'U': '∩', 'V': 'Λ', 'W': 'M', 'X': 'X', 'Y': '⅄', 'Z': 'Z',
+            '0': '0', '1': 'Ɩ', '2': 'ᄅ', '3': 'Ɛ', '4': 'ㄣ', '5': 'ϛ', '6': '9', '7': 'ㄥ', '8': '8', '9': '6',
+            '.': '˙', ',': "'", "'": ',', '"': '„', '!': '¡', '?': '¿', '(': ')', ')': '(', '[': ']', ']': '[', '{': '}', '}': '{', '_': '‾'
+        };
+
+        // Elementos del DOM
+        const convertButton = document.getElementById('convertButton');
+        const inputText = document.getElementById('inputText');
+        const resultContainer = document.getElementById('resultContainer');
+        const outputDiv = document.getElementById('output');
+        const copyButton = document.getElementById('copyButton');
+
+        // Función principal para invertir el texto
+        function flipText(text) {
+            let reversedText = text.split('').reverse().join('');
+            let flippedText = '';
+            for (let i = 0; i < reversedText.length; i++) {
+                const char = reversedText[i];
+                const lowerChar = char.toLowerCase();
+                if (charMap[lowerChar]) {
+                    flippedText += charMap[char] || charMap[lowerChar];
+                } else {
+                    flippedText += char;
+                }
+            }
+            return flippedText;
+        }
+
+        // Evento para el botón de convertir
+        convertButton.addEventListener('click', () => {
+            const originalText = inputText.value;
+            if (originalText.trim() === '') {
+                outputDiv.textContent = 'ERROR: INPUT_BUFFER VACÍO.';
+            } else {
+                const flipped = flipText(originalText);
+                outputDiv.textContent = flipped;
+            }
+            resultContainer.classList.remove('hidden');
+        });
+
+        // Evento para el botón de copiar
+        copyButton.addEventListener('click', () => {
+            const textToCopy = outputDiv.textContent;
+            
+            const tempTextArea = document.createElement('textarea');
+            tempTextArea.value = textToCopy;
+            tempTextArea.style.position = 'absolute';
+            tempTextArea.style.left = '-9999px';
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempTextArea);
+
+            // Feedback visual para el usuario
+            copyButton.textContent = 'COPIADO OK';
+            setTimeout(() => {
+                copyButton.textContent = '> COPIAR';
+            }, 2000);
+        });
+
+    </script>
+</body>
+</html>
